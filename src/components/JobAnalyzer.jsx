@@ -195,136 +195,211 @@ NOW ANALYZE AND RETURN THE OUTPUT IN THE EXACT FORMAT.`;
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 space-y-8 animate-in fade-in duration-500">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-slate-900 font-heading">Job Skill Analyzer</h1>
-                    <p className="text-slate-500 mt-1">Check how your skills stack up against any job description.</p>
-                </div>
-                <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 px-4 py-2 rounded-xl">
-                    <Sparkles className="text-blue-600" size={20} />
-                    <span className="text-sm font-semibold text-blue-700">AI-Powered Analysis</span>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+            {/* Hero Section */}
+            <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 text-white py-12 px-6">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex items-start justify-between gap-6 mb-8">
+                        <div>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="bg-blue-400 p-3 rounded-lg">
+                                    <Target size={28} />
+                                </div>
+                                <h1 className="text-4xl font-bold">Job Skill Analyzer</h1>
+                            </div>
+                            <p className="text-blue-100 text-lg max-w-2xl">Get AI-powered insights on how your skills match job requirements. Identify gaps and get personalized learning recommendations.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Inputs Sidebar */}
-                <div className="lg:col-span-12 space-y-6">
-                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-6 space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                                        <Briefcase size={16} className="text-slate-400" />
-                                        Job Description
-                                    </label>
-                                    <textarea
-                                        placeholder="Paste the full job description here..."
-                                        className="w-full h-64 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm resize-none"
-                                        value={jd}
-                                        onChange={(e) => setJd(e.target.value)}
-                                    />
-                                </div>
-                                <div className="space-y-4">
-                                    <label className="flex items-center gap-2 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                                        <Brain size={16} className="text-slate-400" />
-                                        Your Technical Skills
-                                    </label>
-                                    <textarea
-                                        placeholder="List your skills (e.g. React, Node.js, SQL...)"
-                                        className="w-full h-64 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm resize-none"
-                                        value={skills}
-                                        onChange={(e) => setSkills(e.target.value)}
-                                    />
-                                </div>
+            <div className="max-w-6xl mx-auto px-6 py-12">
+                {/* Input Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* Job Description */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="bg-blue-100 p-3 rounded-lg">
+                                <Search className="text-blue-600" size={20} />
                             </div>
-
-                            <button
-                                onClick={analyzeJob}
-                                disabled={loading}
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-200"
-                            >
-                                {loading ? (
-                                    <>
-                                        <Loader2 className="animate-spin" />
-                                        Analyzing Job Fit...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Target size={20} />
-                                        Run Skill Analysis
-                                    </>
-                                )}
-                            </button>
-
-                            {error && (
-                                <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-600 animate-in slide-in-from-top-2">
-                                    <AlertCircle className="shrink-0 mt-0.5" size={18} />
-                                    <p className="text-sm font-medium">{error}</p>
-                                </div>
-                            )}
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900">Job Description</h2>
+                                <p className="text-sm text-slate-500">Paste the full job posting or description</p>
+                            </div>
+                        </div>
+                        <textarea
+                            placeholder="Paste the full job description here... Include responsibilities, requirements, and qualifications."
+                            className="w-full h-72 px-5 py-4 bg-white border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all text-sm resize-none font-medium shadow-sm hover:border-slate-300"
+                            value={jd}
+                            onChange={(e) => setJd(e.target.value)}
+                        />
+                        <div className="text-xs text-slate-400 flex items-center gap-2">
+                            <AlertCircle size={14} />
+                            {jd.length} characters
                         </div>
                     </div>
 
-                    {/* Results Section */}
-                    {analysis && (
-                        <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
-                            {/* Score Card */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="md:col-span-1 bg-white rounded-2xl border border-slate-200 p-8 flex flex-col items-center justify-center text-center shadow-sm">
-                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Skill GPA</div>
-                                    <div className={`text-7xl font-black ${parseInt(analysis.gpa) > 70 ? 'text-green-600' : 'text-orange-500'}`}>
-                                        {analysis.gpa}
-                                    </div>
-                                    <div className="mt-4 text-sm font-medium text-slate-500">Industry Fitness Score</div>
-                                </div>
+                    {/* Skills */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="bg-purple-100 p-3 rounded-lg">
+                                <Brain className="text-purple-600" size={20} />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900">Your Technical Skills</h2>
+                                <p className="text-sm text-slate-500">List all your relevant skills</p>
+                            </div>
+                        </div>
+                        <textarea
+                            placeholder="List your skills separated by commas. E.g: React, Node.js, Python, SQL, Docker, AWS..."
+                            className="w-full h-72 px-5 py-4 bg-white border-2 border-slate-200 rounded-2xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all text-sm resize-none font-medium shadow-sm hover:border-slate-300"
+                            value={skills}
+                            onChange={(e) => setSkills(e.target.value)}
+                        />
+                        <div className="text-xs text-slate-400 flex items-center gap-2">
+                            <AlertCircle size={14} />
+                            {skills.split(',').filter(s => s.trim()).length} skills detected
+                        </div>
+                    </div>
+                </div>
 
-                                <div className="md:col-span-2 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
-                                    <Sparkles className="absolute top-[-20px] right-[-20px] text-white/10" size={120} />
-                                    <div className="relative z-10">
-                                        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                            <Sparkles className="text-yellow-400" size={20} />
-                                            Company Expectation vs User Skills
-                                        </h3>
-                                        <div className="space-y-4">
-                                            <div className="flex flex-col gap-1">
-                                                <span className="text-[10px] font-bold text-white/50 uppercase tracking-wider">Required Technical Skills</span>
-                                                <p className="text-sm font-medium leading-relaxed">{analysis.required.join(', ')}</p>
-                                            </div>
-                                            <div className="flex flex-col gap-1">
-                                                <span className="text-[10px] font-bold text-green-400/70 uppercase tracking-wider">Matching Skills (User Has)</span>
-                                                <p className="text-sm font-medium text-green-400">{analysis.has.join(', ') || 'None matched'}</p>
-                                            </div>
-                                            <div className="flex flex-col gap-1">
-                                                <span className="text-[10px] font-bold text-red-400/70 uppercase tracking-wider">Missing Competencies</span>
-                                                <p className="text-sm font-medium text-red-400">{analysis.missing.join(', ') || 'No missing skills!'}</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                {/* Error Message */}
+                {error && (
+                    <div className="mb-8 p-5 bg-red-50 border-2 border-red-200 rounded-2xl flex items-start gap-4 animate-in">
+                        <AlertCircle className="text-red-600 flex-shrink-0 mt-1" size={20} />
+                        <div>
+                            <h3 className="font-bold text-red-900">Error</h3>
+                            <p className="text-red-700 text-sm mt-1">{error}</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Analyze Button */}
+                <div className="mb-12">
+                    <button
+                        onClick={analyzeJob}
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-xl hover:shadow-2xl transform hover:scale-105 active:scale-95 duration-200"
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="animate-spin" size={22} />
+                                <span>Analyzing Your Skills...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Sparkles size={22} />
+                                <span>Run Skill Analysis</span>
+                                <ArrowRight size={20} />
+                            </>
+                        )}
+                    </button>
+                </div>
+{/* Results Section */}
+                {analysis && (
+                    <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-700">
+                        {/* Score Card */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* GPA Score */}
+                            <div className="bg-white rounded-2xl border-2 border-slate-200 p-8 flex flex-col items-center justify-center text-center shadow-lg hover:shadow-xl transition-all">
+                                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Skill GPA Score</div>
+                                <div className={`text-8xl font-black mb-4 ${parseInt(analysis.gpa) >= 70 ? 'text-emerald-600' : parseInt(analysis.gpa) >= 50 ? 'text-amber-600' : 'text-red-600'}`}>
+                                    {analysis.gpa}
+                                </div>
+                                <div className="text-sm font-semibold text-slate-600 mb-4">out of 100</div>
+                                <div className={`inline-block px-4 py-2 rounded-full text-xs font-bold ${parseInt(analysis.gpa) >= 70 ? 'bg-emerald-100 text-emerald-700' : parseInt(analysis.gpa) >= 50 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
+                                    {parseInt(analysis.gpa) >= 70 ? '✓ Good Match' : parseInt(analysis.gpa) >= 50 ? '⚠ Moderate Match' : '✗ Needs Work'}
                                 </div>
                             </div>
 
-                            {/* Learning Path */}
-                            <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
-                                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                                    <ArrowRight className="text-blue-600" size={24} />
-                                    What You Must Learn
-                                </h3>
-                                <div className="prose prose-slate max-w-none">
-                                    <pre className="whitespace-pre-wrap font-sans text-sm text-slate-600 leading-relaxed bg-slate-50 p-6 rounded-xl border border-slate-100">
-                                        {analysis.learn}
-                                    </pre>
+                            {/* Matched Skills */}
+                            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border-2 border-emerald-200 p-8 shadow-lg">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="bg-emerald-600 text-white p-3 rounded-lg">
+                                        <CheckCircle2 size={20} />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-emerald-900">Your Matched Skills</h3>
+                                </div>
+                                <div className="space-y-2">
+                                    {analysis.has.length > 0 ? (
+                                        analysis.has.map((skill, idx) => (
+                                            <div key={idx} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-emerald-200">
+                                                <CheckCircle2 size={16} className="text-emerald-600 flex-shrink-0" />
+                                                <span className="text-sm font-medium text-emerald-900">{skill}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-emerald-600 italic">No matching skills found</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Missing Skills */}
+                            <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-2xl border-2 border-red-200 p-8 shadow-lg">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="bg-red-600 text-white p-3 rounded-lg">
+                                        <AlertCircle size={20} />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-red-900">Missing Skills</h3>
+                                </div>
+                                <div className="space-y-2">
+                                    {analysis.missing.length > 0 ? (
+                                        analysis.missing.map((skill, idx) => (
+                                            <div key={idx} className="flex items-center gap-2 p-3 bg-white rounded-lg border border-red-200">
+                                                <AlertCircle size={16} className="text-red-600 flex-shrink-0" />
+                                                <span className="text-sm font-medium text-red-900">{skill}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-red-600 italic">You have all required skills!</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
-                    )}
-                </div>
+
+                        {/* Required Skills Overview */}
+                        <div className="bg-white rounded-2xl border-2 border-slate-200 p-8 shadow-lg">
+                            <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-3">
+                                <div className="bg-blue-100 p-3 rounded-lg">
+                                    <Target className="text-blue-600" size={20} />
+                                </div>
+                                All Required Skills for This Role
+                            </h3>
+                            <div className="flex flex-wrap gap-3">
+                                {analysis.required.map((skill, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`px-4 py-2 rounded-full text-sm font-semibold border-2 ${
+                                            analysis.has.some(s => s.toLowerCase() === skill.toLowerCase())
+                                                ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
+                                                : 'bg-slate-100 text-slate-700 border-slate-300'
+                                        }`}
+                                    >
+                                        {skill}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Learning Path */}
+                        <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 shadow-xl text-white">
+                            <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+                                <div className="bg-yellow-400 text-slate-900 p-3 rounded-lg">
+                                    <Brain size={24} />
+                                </div>
+                                Your Learning Path
+                            </h3>
+                            <div className="bg-white/10 rounded-xl p-6 border border-white/20 backdrop-blur-sm">
+                                <pre className="whitespace-pre-wrap font-sans text-sm text-slate-100 leading-relaxed">
+                                    {analysis.learn}
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
 };
-
-// Simple icon fallbacks if lucide-react isn't available or specific icons are missing
-const Briefcase = ({ size, className }) => <Target size={size} className={className} />;
 
 export default JobAnalyzer;

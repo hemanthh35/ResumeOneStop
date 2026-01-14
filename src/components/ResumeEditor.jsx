@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import SkillMatcher from './SkillMatcher';
 
 // Helper for tailwind class merging
 function cn(...inputs) {
@@ -112,13 +111,13 @@ export default function ResumeEditor({ data, setData }) {
     const loadSampleData = () => {
         const sampleData = {
             contact: {
-                fullName: 'Saandeep Nadukuda',
-                email: 'saandeep@example.com',
+                fullName: 'Your Name',
+                email: 'your.email@example.com',
                 phone: '+91 98765 43210',
                 location: 'Hyderabad, India',
-                linkedin: 'linkedin.com/in/saandeep',
-                github: 'github.com/saandeep',
-                portfolio: 'saandeep.dev'
+                linkedin: 'linkedin.com/in/yourprofile',
+                github: 'github.com/yourprofile',
+                portfolio: 'yourportfolio.dev'
             },
             summary: 'Experienced Senior Software Engineer with a passion for building scalable web applications and AI-driven solutions. Proven track record of leading cross-functional teams and delivering high-quality products on time. Expert in React, Node.js, and modern cloud architectures.',
             experience: [
@@ -158,7 +157,7 @@ export default function ResumeEditor({ data, setData }) {
                     name: 'AI Resume Analyzer',
                     description: 'An AI-powered tool that analyzes resumes against job descriptions to provide optimization scores.',
                     technologies: 'React, OpenAI API, Python, Flask',
-                    link: 'github.com/saandeep/resume-analyzer',
+                    link: 'github.com/yourprofile/resume-analyzer',
                     highlights: [
                         'Implemented OCR for document parsing with 98% accuracy.',
                         'Used GPT-4 for semantic analysis and feedback generation.'
@@ -811,9 +810,6 @@ export default function ResumeEditor({ data, setData }) {
                     </CollapsibleItem>
                 ))}
             </SectionWrapper>
-
-            {/* Skill Matcher */}
-            <SkillMatcher userSkills={data.skills} />
 
             <footer className="text-center py-12 border-t border-slate-200 text-slate-400 text-sm">
                 <p>© 2026 Professional Resume Builder. All rights reserved.</p>

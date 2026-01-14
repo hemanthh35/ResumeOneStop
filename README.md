@@ -1,257 +1,243 @@
-# Resume Intelligence Platform
+# ResumeCoderr - AI-Powered Resume Builder
 
-A full-stack web application that ranks skills using ML and generates ATS-friendly resumes.
+A modern, frontend-first web application for building professional ATS-friendly resumes and analyzing job fit using AI.
 
 ## 🎯 Features
 
-### 1️⃣ Resume Skill Ranking (ML Integration)
-- Analyze how your skills match with job descriptions
-- Get skill relevance scores (0-100%)
-- Overall profile match percentage
-- Discover what skills you need to learn
-- Project relevance analysis
+### 1️⃣ Resume Builder & Editor
+- Edit all resume sections (contact, summary, experience, projects, skills, etc.)
+- 4 professional resume templates with real-time preview
+- Export to PDF with one click
+- Mobile-responsive editor interface
 
-### 2️⃣ Auto Resume Builder (Rule-Based Engine)
-- Generate professional ATS-friendly resumes
-- 4 different template styles
-- Export as PDF or DOCX
-- Skill-based optimization
-- Deterministic output (same input = same resume)
+### 2️⃣ AI-Powered Job Analyzer
+- Paste job descriptions and your skills
+- Get Skill GPA score (0-100%) powered by LLM
+- See required vs missing skills breakdown
+- Get prioritized learning path recommendations
 
 ## 🧱 Tech Stack
 
 ### Frontend
-- React.js with Vite
-- Tailwind CSS
-- Axios for API calls
-- React Router for navigation
+- **Framework**: React.js 19.2.0 with Hooks
+- **Build Tool**: Vite 7.2.4 (ultra-fast bundler)
+- **Styling**: Tailwind CSS 4.1.18 with JIT compilation
+- **Icons**: Lucide React 0.562.0
+- **PDF Export**: html2pdf.js 0.14.0
+- **Utilities**: clsx, tailwind-merge
 
-### Backend
-- Python Flask
-- scikit-learn (TF-IDF + Cosine Similarity)
-- joblib (model loading)
-- ReportLab (PDF generation)
-- python-docx (DOCX generation)
-
-### ML
-- Pretrained TF-IDF model
-- Cosine similarity for scoring
-- No text generation or LLMs
+### AI & LLM Integration
+- **Provider**: OpenRouter API (openrouter.ai)
+- **Model**: Meta Llama 3.3 70B Instruct
+- **Purpose**: Job description analysis, skill matching, gap analysis
+- **Configuration**: Free tier available, pay-as-you-go after
 
 ## 📦 Installation
 
 ### Prerequisites
 - Node.js 16+ and npm
-- Python 3.8+
-- pip
+- OpenRouter API Key (get free at [openrouter.ai](https://openrouter.ai/keys))
 
-### Backend Setup
-
-```bash
-cd backend
-
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Place your trained model
-# Ensure tfidf_resume_model.pkl is in backend/ml/ folder
-
-# Run the Flask server
-python app.py
-```
-
-Backend will run on `http://localhost:5000`
-
-### Frontend Setup
+### Setup
 
 ```bash
-cd frontend
-
 # Install dependencies
 npm install
+
+# Create .env file with your API key
+echo "VITE_OPENROUTER_API_KEY=your-key-here" > .env
 
 # Run development server
 npm run dev
 ```
 
-Frontend will run on `http://localhost:3000`
+Frontend runs on `http://localhost:5173` (Vite default)
 
-## 🔌 API Endpoints
-
-### 1. Health Check
+### Production Build
+```bash
+npm run build
+npm run preview
 ```
-GET /api/health
-```
 
-### 2. Skill Ranking
-```
-POST /api/skill-rank
+## 🔌 API Integration
 
-Request:
-{
-  "job_description": "Looking for Python developer...",
-  "skills": ["Python", "SQL", "Machine Learning"],
-  "projects": ["ML project description..."],
-  "internships": ["Internship at XYZ..."]
+### Job Analyzer
+Uses OpenRouter API with Meta Llama 3.3 70B model for:
+- Job description parsing
+- Skill requirement extraction
+- User skill matching
+- Gap analysis
+- Learning path generation
+
+**Request:**
+```
+POST https://openrouter.ai/api/v1/chat/completions
+Headers: Authorization: Bearer YOUR_KEY
+Body: {
+  "model": "meta-llama/llama-3.3-70b-instruct",
+  "messages": [...],
+  "temperature": 0.7
 }
-
-Response:
-{
-  "skill_scores": {"Python": 0.82, "SQL": 0.76, ...},
-  "project_scores": {...},
-  "overall_match_score": 0.71,
-  "missing_skills": ["Docker", "Kubernetes", "AWS"]
-}
 ```
 
-### 3. Build Resume
-```
-POST /api/build-resume
-
-Request:
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "phone": "1234567890",
-  "branch": "Computer Science",
-  "cgpa": 8.5,
-  "skills": ["Python", "SQL"],
-  "projects": ["Project 1..."],
-  "internships": [],
-  "certifications": [],
-  "achievements": [],
-  "skill_scores": {"Python": 0.82},
-  "template": 1,
-  "format": "pdf"
-}
-
-Response: PDF or DOCX file download
-```
+**Output:**
+- Skill GPA (0-100 match score)
+- Required skills breakdown
+- Missing skills with priorities
+- Learning recommendations
 
 ## 📁 Project Structure
 
 ```
 resume_saandeep/
-├── backend/
-│   ├── app.py                 # Flask application
-│   ├── requirements.txt       # Python dependencies
-│   ├── ml/
-│   │   ├── scorer.py         # ML scoring logic
-│   │   └── tfidf_resume_model.pkl  # Trained model
-│   ├── resume/
-│   │   └── builder.py        # Resume generation
-│   └── utils/
-│       └── preprocessing.py  # Text processing
-│
-├── frontend/
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── Home.jsx
-│   │   │   ├── SkillRanking.jsx
-│   │   │   ├── ResumeBuilder.jsx
-│   │   │   └── Result.jsx
-│   │   ├── components/
-│   │   │   ├── JDInput.jsx
-│   │   │   ├── SkillGapPanel.jsx
-│   │   │   ├── ResumeForm.jsx
-│   │   │   └── ResumePreview.jsx
-│   │   ├── services/
-│   │   │   └── api.js
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── package.json
-│   └── vite.config.js
-│
+├── src/
+│   ├── components/
+│   │   ├── ResumeEditor.jsx      # Resume editing interface
+│   │   ├── ResumePreview.jsx     # 4 resume templates
+│   │   ├── JobAnalyzer.jsx       # AI job analysis (OpenRouter)
+│   │   └── Navbar.jsx            # Navigation & controls
+│   ├── App.jsx                    # Main app logic
+│   ├── main.jsx                   # React entry point
+│   ├── App.css                    # Component styles
+│   ├── index.css                  # Tailwind directives
+│   └── assets/                    # Images & static files
+├── public/                         # Static assets
+├── index.html                     # HTML template
+├── .env                           # API keys (not in git)
+├── package.json                   # Dependencies
+├── vite.config.js                 # Vite build config
+├── eslint.config.js               # Linting rules
 └── README.md
 ```
 
 ## 🚀 Usage
 
-### Skill Ranking Flow
-1. Navigate to "Skill Ranking" from home page
-2. Paste job description
-3. Enter your skills (comma-separated)
-4. Optionally add projects and internships
-5. Click "Analyze Skills"
-6. View skill scores, match percentage, and missing skills
+### Building a Resume (3 Steps)
+1. **Editor Tab** - Fill in your information:
+   - Contact details (name, email, phone, location, LinkedIn, GitHub, portfolio)
+   - Summary, experience, projects, skills, certifications
+   - Education, awards, hackathons, publications, teaching, languages
 
-### Resume Building Flow
-1. Navigate to "Resume Builder" from home page
-2. Fill in personal information
-3. Add skills, projects, internships, certifications, achievements
-4. Select template style (1-4)
-5. Choose export format (PDF or DOCX)
-6. Click "Generate Resume"
-7. Resume downloads automatically
+2. **Preview Tab** - Choose template style:
+   - ATS Classic (simple B&W, best for parsing)
+   - SimpleCV LaTeX (academic serif style)
+   - SimpleCV Academic (indigo-themed indented)
+   - Creative Compact (modern header design)
+
+3. **Download** - Click "Download as PDF"
+
+### Analyzing Job Fit (4 Steps)
+1. **Analyzer Tab** - Paste job description
+2. Enter or update your skills
+3. Click "Analyze" button
+4. View results:
+   - **Skill GPA**: Your match percentage (0-100%)
+   - **Matched Skills**: What you already have
+   - **Missing Skills**: What you need to learn (prioritized)
+   - **Learning Path**: Top 10 recommendations
 
 ## ✨ Key Features
 
-### ML-Powered Skill Ranking
-- Uses TF-IDF vectorization
-- Cosine similarity for matching
-- Trained on 10,000 resume samples
-- Deterministic and reproducible
+### Resume Templates
+1. **ATS Classic** - Single column, no colors (passes ATS scanners)
+2. **SimpleCV LaTeX** - Serif fonts, academic layout
+3. **SimpleCV Academic** - Indigo accents, indented structure
+4. **Creative Compact** - Modern header, condensed sections
 
-### Resume Builder Rules
-✅ Uses only user-provided data
-✅ No text rewriting or generation
-✅ Fixed template structure
-✅ Top 3 skills highlighted
-✅ Projects ordered by relevance
-✅ CGPA only shown if ≥ 6.5
-✅ Empty sections hidden
+All templates:
+- ✅ ATS-friendly formatting
+- ✅ Print & PDF optimized
+- ✅ Mobile-responsive editor
+- ✅ Real-time preview
 
-### ATS-Friendly Output
-- Clean formatting
-- Proper section hierarchy
-- Keyword optimization
-- Standard fonts and spacing
-- Professional templates
+### Job Analysis (AI-Powered)
+- ✅ LLM extracts required skills from JD
+- ✅ Matches against your skills
+- ✅ Scores each category by importance
+- ✅ Provides learning recommendations
+- ✅ No data stored (all local/API)
 
-## 🧪 Validation
+## 🧪 Data & Validation
 
-The system handles:
-- Empty job description → returns zero scores
-- No skills → blocks analysis with error
-- Invalid input → shows error message
-- Missing data → hides sections in resume
+### Resume Editor
+- ✅ All data stored in browser state
+- ✅ Real-time validation
+- ✅ Empty sections auto-hide
+- ✅ Supports 8+ resume sections
+- ✅ PDF exports from preview
+
+### Job Analyzer
+- ✅ Validates job description input
+- ✅ Validates skills list
+- ✅ Checks API key availability
+- ✅ Handles API errors gracefully
+- ✅ Shows loading states
 
 ## 🔒 Privacy & Security
 
-- Works completely offline
-- No external API calls
-- No data stored or transmitted
-- No LLMs or cloud services
-- All processing happens locally
+- 🌐 **Frontend-Only**: No backend server needed
+- 📄 **Data Privacy**: Resume data stays in your browser (never saved)
+- 🚫 **No Database**: No user accounts, no data storage
+- 🔐 **API Only**: OpenRouter API calls for job analysis only
+- 📖 **Open Source**: Full code transparency
+- ✅ **No Tracking**: No analytics or cookies
+
+**Note:** Your resume data exists only in browser memory. Close the tab and it's gone. For persistence, use localStorage or export PDF.
 
 ## 📝 Resume Templates
 
-1. **Template 1**: Classic Professional
-2. **Template 2**: Modern Minimalist
-3. **Template 3**: Two-Column Style
-4. **Template 4**: Executive Style
+### 1. ATS Classic
+- Single column layout
+- Black & white only
+- Optimized for ATS systems
+- Best for automated scanning
 
-All templates are ATS-friendly and follow industry standards.
+### 2. SimpleCV LaTeX
+- Serif typography (Georgia, Times New Roman)
+- Academic indentation style
+- Professional appearance
+- Good for technical roles
+
+### 3. SimpleCV Academic
+- Indigo accent colors
+- Structured sections with indents
+- Clean typography
+- Modern yet formal
+
+### 4. Creative Compact
+- Modern header design
+- Compact spacing
+- Professional yet creative
+- Multi-section layout
+
+All are print-friendly and PDF-optimized.
 
 ## 🛠 Development
 
-### Backend Development
 ```bash
-cd backend
-python app.py
-```
+# Install dependencies
+npm install
 
-### Frontend Development
-```bash
-cd frontend
+# Development server with HMR
 npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Lint code
+npm run lint
 ```
 
-### Building for Production
-```bash
-cd frontend
-npm run build
+### Environment Variables
+Create `.env` file:
 ```
+VITE_OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxx
+```
+
+Get free key: https://openrouter.ai/keys
 
 ## 📄 License
 
@@ -263,21 +249,26 @@ This is an academic project. Feel free to fork and enhance!
 
 ## ⚠️ Important Notes
 
-1. **ML Model**: Ensure `tfidf_resume_model.pkl` is in `backend/ml/` folder
-2. **CORS**: Backend has CORS enabled for frontend communication
-3. **Port Configuration**: Backend runs on 5000, Frontend on 3000
-4. **Dependencies**: Install all requirements before running
+1. **API Key Required**: Get free OpenRouter key at https://openrouter.ai/keys
+2. **Environment File**: Never commit `.env` to git
+3. **API Costs**: Free tier available, then $5-20/month for regular use
+4. **Resume Data**: Only persists in current browser session
+5. **PDF Export**: Uses html2canvas + jsPDF (works offline)
+6. **Dependencies**: Run `npm install` before first use
 
-## 🎓 Academic Context
+## 🎓 Technologies Demonstrated
 
-This project demonstrates:
-- ML integration in web applications
-- TF-IDF and cosine similarity for text matching
-- Rule-based document generation
-- Full-stack development with React and Flask
-- RESTful API design
-- Client-server architecture
+- ✅ Modern React patterns (Hooks, functional components)
+- ✅ Vite bundler for ultra-fast dev/build
+- ✅ Tailwind CSS utility-first styling
+- ✅ LLM API integration (OpenRouter)
+- ✅ Client-side file generation (PDF export)
+- ✅ Responsive UI design
+- ✅ Component composition patterns
+- ✅ State management with React hooks
+- ✅ Form handling & validation
+- ✅ Real-time preview rendering
 
 ---
 
-**Built with ❤️ for Resume Intelligence**
+**Built with React + Vite + Tailwind + AI** | Frontend-First Architecture | No Backend Required
