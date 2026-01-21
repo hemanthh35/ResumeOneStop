@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ResumeEditor from './components/ResumeEditor'
 import ResumePreview from './components/ResumePreview'
 import JobAnalyzer from './components/JobAnalyzer'
+import SummaryGenerator from './components/SummaryGenerator'
 import Navbar from './components/Navbar'
 import './App.css'
 import html2pdf from 'html2pdf.js'
@@ -95,9 +96,11 @@ function App() {
             selectedTemplate={selectedTemplate}
             setSelectedTemplate={setSelectedTemplate}
           />
-        ) : (
+        ) : view === 'analyzer' ? (
           <JobAnalyzer userSkills={data.skills} />
-        )}
+        ) : view === 'summary' ? (
+          <SummaryGenerator userSkills={data.skills} />
+        ) : null}
       </main>
     </div>
   )

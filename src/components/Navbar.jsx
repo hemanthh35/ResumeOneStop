@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Edit3, Layout, Target, Menu, X } from 'lucide-react';
+import { FileText, Edit3, Layout, Target, Menu, X, Sparkles } from 'lucide-react';
 
 const Navbar = ({ view, setView, onDownload }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -8,6 +8,7 @@ const Navbar = ({ view, setView, onDownload }) => {
     { id: 'editor', label: 'Editor', icon: Edit3 },
     { id: 'preview', label: 'Preview', icon: Layout },
     { id: 'analyzer', label: 'Analyzer', icon: Target },
+    { id: 'summary', label: 'Summary AI', icon: Sparkles },
   ];
 
   return (
