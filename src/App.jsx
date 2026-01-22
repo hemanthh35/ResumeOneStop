@@ -3,6 +3,7 @@ import ResumeEditor from './components/ResumeEditor'
 import ResumePreview from './components/ResumePreview'
 import JobAnalyzer from './components/JobAnalyzer'
 import SummaryGenerator from './components/SummaryGenerator'
+import ATSScorer from './components/ATSScorer'
 import Navbar from './components/Navbar'
 import './App.css'
 import html2pdf from 'html2pdf.js'
@@ -100,6 +101,8 @@ function App() {
           <JobAnalyzer userSkills={data.skills} />
         ) : view === 'summary' ? (
           <SummaryGenerator userSkills={data.skills} />
+        ) : view === 'ats' ? (
+          <ATSScorer />
         ) : null}
       </main>
     </div>
