@@ -17,6 +17,7 @@
  * - FIREBASE_PRIVATE_KEY: Firebase private key
  */
 
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -30,7 +31,7 @@ import studentRoutes from './src/routes/studentRoutes.js';
 import { optionalAuth } from './src/middleware/authMiddleware.js';
 
 const app = express();
-const PORT = process.env.PORT || 5173;
+const PORT = process.env.PORT || 5001;
 
 // ============================================
 // MIDDLEWARE CONFIGURATION
@@ -68,7 +69,7 @@ if (process.env.NODE_ENV !== 'production') {
  * Health check endpoint
  */
 app.get('/api/health', (req, res) => {
-  res.json({ 
+  res.json({
     status: 'healthy',
     service: 'Placement Management API',
     version: '2.0.0',
@@ -120,14 +121,14 @@ app.post('/api/generate-resume', optionalAuth, async (req, res) => {
     const { studentData, driveData, template = 'ats-classic' } = req.body;
 
     if (!studentData) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'Student data is required',
         message: 'Please provide studentData in the request body'
       });
     }
 
     if (!studentData.name && !studentData.contact?.fullName) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: 'Student name is required',
         message: 'studentData must include a name field'
       });
@@ -136,7 +137,7 @@ app.post('/api/generate-resume', optionalAuth, async (req, res) => {
     console.log(`[Resume API] Generating resume for: ${studentData.name || studentData.contact?.fullName}`);
 
     const resumeData = transformStudentDataToResume(studentData, driveData);
-    
+
     res.json({
       success: true,
       resumeData,
@@ -146,7 +147,7 @@ app.post('/api/generate-resume', optionalAuth, async (req, res) => {
 
   } catch (error) {
     console.error('[Resume API] Error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to generate resume',
       message: error.message
     });
@@ -175,7 +176,7 @@ app.post('/api/prepare-resume', optionalAuth, async (req, res) => {
 
   } catch (error) {
     console.error('[Prepare Resume API] Error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Failed to prepare resume data',
       message: error.message
     });
@@ -203,6 +204,118 @@ app.get('/api/templates', (req, res) => {
       }
     ]
   });
+});
+
+// ============================================
+// ATS SCORING ENDPOINT
+// ============================================
+
+/**
+ * POST /api/ats-score
+ * Analyze resume text for ATS compatibility
+ * Requires OPENROUTER_API_KEY environment variable
+ */
+app.post('/api/ats-score', async (req, res) => {
+  try {
+    const { resumeText } = req.body;
+    const apiKey = process.env.OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY;
+
+    if (!resumeText || resumeText.trim().length < 50) {
+      return res.status(400).json({
+        error: 'Resume text is required',
+        message: 'Please provide resume text with at least 50 characters'
+      });
+    }
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: 'API key not configured',
+        message: 'OPENROUTER_API_KEY environment variable is not set'
+      });
+    }
+
+    console.log(`[ATS API] Analyzing resume (${resumeText.length} chars)`);
+
+    const systemPrompt = `You are an ATS analyzer. Analyze the resume and provide ONLY the score, grade, and brief analysis. No markdown, no asterisks, plain text only.
+
+OUTPUT FORMAT (EXACTLY AS SHOWN):
+
+ATS SCORE: [0-100]
+
+GRADE: [A+/A/B+/B/C+/C/D/F]
+
+STRENGTHS:
+1. [First strength]
+2. [Second strength]
+3. [Third strength]
+
+CRITICAL ISSUES:
+1. [First issue]
+2. [Second issue]
+3. [Third issue]
+
+RECOMMENDATIONS:
+1. [First recommendation]
+2. [Second recommendation]
+3. [Third recommendation]
+4. [Fourth recommendation]
+5. [Fifth recommendation]
+
+KEYWORDS FOUND: [number]
+
+MISSING KEYWORDS: [list 5-7 important keywords]
+
+Be concise. No formatting. Plain text only.`;
+
+    const userPrompt = `Analyze this resume quickly:
+
+${resumeText.substring(0, 12000)}
+
+Provide analysis in the exact format specified. Be concise.`;
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'http://localhost:3000',
+        'X-Title': 'PlacementPro ATS Scorer'
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-3.1-8b-instruct',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    const analysis = result.choices?.[0]?.message?.content || 'No analysis generated.';
+
+    // Parse the response
+    const scoreMatch = analysis.match(/ATS SCORE:\s*(\d+)/i);
+    const gradeMatch = analysis.match(/GRADE:\s*([A-F][+]?)/i);
+
+    res.json({
+      success: true,
+      score: scoreMatch ? parseInt(scoreMatch[1]) : 0,
+      grade: gradeMatch ? gradeMatch[1] : 'N/A',
+      fullAnalysis: analysis
+    });
+
+  } catch (error) {
+    console.error('[ATS API] Error:', error);
+    res.status(500).json({
+      error: 'Failed to analyze resume',
+      message: error.message
+    });
+  }
 });
 
 // ============================================

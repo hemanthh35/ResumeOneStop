@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ResumeEditor from './components/ResumeEditor'
 import ResumePreview from './components/ResumePreview'
 import JobAnalyzer from './components/JobAnalyzer'
@@ -35,6 +35,15 @@ function App() {
 
   const [view, setView] = useState('editor'); // 'editor' or 'preview'
   const [selectedTemplate, setSelectedTemplate] = useState('template-1');
+
+  // Handle URL query parameter for direct view access
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewParam = urlParams.get('view');
+    if (viewParam && ['editor', 'preview', 'analyzer', 'summary', 'ats'].includes(viewParam)) {
+      setView(viewParam);
+    }
+  }, []);
 
   const handleDownload = () => {
     const element = document.getElementById('resume-to-print');
