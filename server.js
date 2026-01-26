@@ -42,6 +42,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',    // placement-frontend (React)
     'http://localhost:5173',    // this API server
+    'https://college-placement-guide.vercel.app', // Deployed Frontend
     process.env.FRONTEND_URL    // production frontend URL
   ].filter(Boolean),
   credentials: true,
